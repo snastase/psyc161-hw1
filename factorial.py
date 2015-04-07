@@ -40,9 +40,11 @@ def test_factorial():
 
 def time_test():
     from timeit import Timer
-    t = Timer("factorial_recursive(10)", "from factorial import factorial_recursive")
+    t = Timer("factorial_recursive(10)",
+              "from factorial import factorial_recursive")
     print t.timeit(1000)
-    t = Timer("factorial_nonrecursive(10)", "from factorial import factorial_nonrecursive")
+    t = Timer("factorial_nonrecursive(10)",
+              "from factorial import factorial_nonrecursive")
     print t.timeit(1000)
 
 if __name__ == '__main__':
