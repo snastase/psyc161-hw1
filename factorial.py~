@@ -4,8 +4,6 @@ Takes a non-negative integer n, and returns n!
 """
 
 from nose.tools import assert_equal, assert_greater_equal
-from numpy import prod
-
 
 def factorial_recursive(n):
     try:
@@ -19,6 +17,7 @@ def factorial_recursive(n):
 
 
 def factorial_nonrecursive(n):
+    from numpy import prod
     try:
         n = int(n)
     except ValueError:
@@ -27,23 +26,40 @@ def factorial_nonrecursive(n):
     return factorial
 
 
+def factorial_scipy(n):
+    import scipy.misc
+    try:
+        n = int(n)
+    except ValueError:
+        print "Unable to convert input n to integer!"
+    factorial = int(scipy.misc.factorial(n))
+    return factorial
+
+
 def test_factorial():
-    for method in (factorial_recursive(), factorial_nonrecursive()):
+    for method in (factorial_recursive, factorial_nonrecursive,
+                   factorial_scipy):
         assert_equal(method(0), 1)
         assert_equal(method(1), 1)
         for i in range(2, 11):
             assert_equal(method(i) % 2, 0)
             assert_greater_equal(method(i), i)
     for i in range(0, 11):
-        assert_equal(factorial_recursive(), factorial_nonrecursive())
+        assert_equal(factorial_recursive(i), factorial_nonrecursive(i),
+                     factorial_scipy(i))
 
 
-def time_test():
+def speed_test():
     from timeit import Timer
-    t = Timer("factorial_recursive(10)", "from factorial import factorial_recursive")
-    print t.timeit(1000)
-    t = Timer("factorial_nonrecursive(10)", "from factorial import factorial_nonrecursive")
-    print t.timeit(1000)
+    t = Timer("factorial_recursive(10)",
+              "from factorial import factorial_recursive")
+    print "Recursive:", t.timeit(10000)
+    t = Timer("factorial_nonrecursive(10)",
+              "from factorial import factorial_nonrecursive")
+    print "Numpy non-recursive:", t.timeit(10000)
+    t = Timer("factorial_scipy(10)",
+              "from factorial import factorial_scipy")
+    print "Scipy factorial:", t.timeit(10000)
 
 if __name__ == '__main__':
     # This is a way to determine either file was "executed", so if it was

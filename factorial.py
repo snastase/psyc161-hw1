@@ -5,6 +5,7 @@ Takes a non-negative integer n, and returns n!
 
 from nose.tools import assert_equal, assert_greater_equal
 
+
 def factorial_recursive(n):
     try:
         n = int(n)
