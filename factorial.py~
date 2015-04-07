@@ -3,7 +3,7 @@
 Takes a non-negative integer n, and returns n!
 """
 
-from nose.tools import assert_equal, assert_greater_equal
+from nose.tools import assert_equal, assert_greater_equal, assert_raises
 
 
 def factorial_recursive(n):
@@ -17,8 +17,7 @@ def factorial_recursive(n):
         return factorial
     elif n < 0:
         n = abs(n)
-        warnings.warn("""
-            Input n must be non-negative, converting to absolute value""")
+        warnings.warn("Input n must be non-negative, converting to positive")
         factorial = n * factorial_recursive(n - 1)
         return factorial
     else:
@@ -27,10 +26,14 @@ def factorial_recursive(n):
 
 
 def factorial_nonrecursive(n):
+    import warnings
     try:
         n = int(n)
     except ValueError:
         print "Unable to convert input n to integer!"
+    if n < 0:
+        n = abs(n)
+        warnings.warn("Input n must be non-negative, converting to positive")
     factorial = 1
     for i in range(1, n+1):
         factorial = factorial * i
@@ -38,36 +41,46 @@ def factorial_nonrecursive(n):
 
 
 def factorial_numpy(n):
+    import warnings
     from numpy import prod
     try:
         n = int(n)
     except ValueError:
         print "Unable to convert input n to integer!"
+    if n < 0:
+        n = abs(n)
+        warnings.warn("Input n must be non-negative, converting to positive")
     factorial = int(prod(range(1, n+1)))
     return factorial
 
 
 def factorial_scipy(n):
+    import warnings
     import scipy.misc
     try:
         n = int(n)
     except ValueError:
         print "Unable to convert input n to integer!"
+    if n < 0:
+        n = abs(n)
+        warnings.warn("Input n must be non-negative, converting to positive")
     factorial = int(scipy.misc.factorial(n))
     return factorial
 
 
 def test_factorial():
     for method in (factorial_recursive, factorial_nonrecursive,
-                   factorial_scipy):
+                   factorial_numpy, factorial_scipy):
         assert_equal(method(0), 1)
         assert_equal(method(1), 1)
         for i in range(2, 11):
             assert_equal(method(i) % 2, 0)
             assert_greater_equal(method(i), i)
+            assert_equal(method(-i), method(i))
     for i in range(0, 11):
-        assert_equal(factorial_recursive(i), factorial_nonrecursive(i),
-                     factorial_scipy(i))
+        assert_equal(factorial_recursive(i), factorial_nonrecursive(i))
+        assert_equal(factorial_recursive(i), factorial_numpy(i))
+        assert_equal(factorial_recursive(i), factorial_scipy(i))
 
 
 def speed_test():
@@ -78,8 +91,8 @@ def speed_test():
     t = Timer("factorial_nonrecursive(10)",
               "from factorial import factorial_nonrecursive")
     print "Non-recursive:", t.timeit(10000)
-    t = Timer("factorial_nonrecursive(10)",
-              "from factorial import factorial_nonrecursive")
+    t = Timer("factorial_numpy(10)",
+              "from factorial import factorial_numpy")
     print "Numpy non-recursive:", t.timeit(10000)
     t = Timer("factorial_scipy(10)",
               "from factorial import factorial_scipy")
