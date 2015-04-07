@@ -54,23 +54,23 @@ def factorial_numpy(n):
     return factorial
 
 
-def factorial_scipy(n):
-    import warnings
-    import scipy.misc
-    try:
-        n = int(n)
-    except ValueError:
-        print "Unable to convert input n to integer!"
-    if n < 0:
-        n = abs(n)
-        warnings.warn("Input n must be non-negative, converting to positive")
-    factorial = int(scipy.misc.factorial(n))
-    return factorial
+# def factorial_scipy(n):
+#    import warnings
+#    import scipy.misc
+#    try:
+#        n = int(n)
+#    except ValueError:
+#        print "Unable to convert input n to integer!"
+#    if n < 0:
+#        n = abs(n)
+#        warnings.warn("Input n must be non-negative, converting to positive")
+#    factorial = int(scipy.misc.factorial(n))
+#    return factorial
 
 
 def test_factorial():
     for method in (factorial_recursive, factorial_nonrecursive,
-                   factorial_numpy, factorial_scipy):
+                   factorial_numpy):
         assert_equal(method(0), 1)
         assert_equal(method(1), 1)
         for i in range(2, 11):
@@ -80,7 +80,6 @@ def test_factorial():
     for i in range(0, 11):
         assert_equal(factorial_recursive(i), factorial_nonrecursive(i))
         assert_equal(factorial_recursive(i), factorial_numpy(i))
-        assert_equal(factorial_recursive(i), factorial_scipy(i))
 
 
 def speed_test():
@@ -93,10 +92,10 @@ def speed_test():
     print "Non-recursive:", t.timeit(10000)
     t = Timer("factorial_numpy(10)",
               "from factorial import factorial_numpy")
-    print "Numpy non-recursive:", t.timeit(10000)
-    t = Timer("factorial_scipy(10)",
-              "from factorial import factorial_scipy")
-    print "Scipy factorial:", t.timeit(10000)
+    print "Numpy factorial:", t.timeit(10000)
+    # t = Timer("factorial_scipy(10)",
+    #          "from factorial import factorial_scipy")
+    # print "Scipy factorial:", t.timeit(10000)
 
 if __name__ == '__main__':
     # This is a way to determine either file was "executed", so if it was
