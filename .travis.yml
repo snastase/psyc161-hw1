@@ -3,6 +3,7 @@ python:
   - "2.7"
 install:
   - pip install coveralls flake8 
+  - sudo apt-get install -y python-scipy
 
 script: 
   - nosetests -v --with-coverage *.py
