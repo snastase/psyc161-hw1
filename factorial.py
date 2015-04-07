@@ -7,6 +7,26 @@ from nose.tools import assert_equal, assert_greater_equal
 
 
 def factorial_recursive(n):
+    import warnings
+    try:
+        n = int(n)
+    except ValueError:
+        print "Unable to convert input n to integer!"
+    if n == 1 or n == 0:
+        factorial = 1
+        return factorial
+    elif n < 0:
+        n = abs(n)
+        warnings.warn("""
+            Input n must be non-negative, converting to absolute value""")
+        factorial = n * factorial_recursive(n - 1)
+        return factorial
+    else:
+        factorial = n * factorial_recursive(n - 1)
+        return factorial
+
+
+def factorial_nonrecursive(n):
     try:
         n = int(n)
     except ValueError:
@@ -17,7 +37,7 @@ def factorial_recursive(n):
     return factorial
 
 
-def factorial_nonrecursive(n):
+def factorial_numpy(n):
     from numpy import prod
     try:
         n = int(n)
@@ -57,6 +77,9 @@ def speed_test():
     print "Recursive:", t.timeit(10000)
     t = Timer("factorial_nonrecursive(10)",
               "from factorial import factorial_nonrecursive")
+    print "Non-recursive:", t.timeit(10000)
+    t = Timer("factorial_numpy(10)",
+              "from factorial import factorial_numpy")
     print "Numpy non-recursive:", t.timeit(10000)
     t = Timer("factorial_scipy(10)",
               "from factorial import factorial_scipy")
