@@ -2,8 +2,8 @@ language: python
 python:
   - "2.7"
 install:
-  - pip install coveralls flake8 
-  - sudo apt-get install -y python-scipy
+  - pip install coveralls flake8
+  - pip install git+http://github.com/scipy/scipy/
 
 script: 
   - nosetests -v --with-coverage *.py
